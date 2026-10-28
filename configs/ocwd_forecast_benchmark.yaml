@@ -1,0 +1,33 @@
+# Separate OCWD forecasting experiment (Phase 3).
+# Target: source-calculated s3sf. Normalisation provenance remains external /
+# incompletely verified. Do NOT pool with synthetic metrics.
+
+name: ocwd_s3sf_baseline_phase3
+extracted_csv_dir: data/extracted/CSV files
+target_column: s3sf
+series_glob: "orange_county_ro_*.csv"
+
+# Shared chronological cutoffs across series (development freezes preprocessing).
+chronology:
+  train_end: "2019-10-01"
+  development_end: "2020-04-01"
+  # test: after development_end through series end
+
+forecasting:
+  horizons_days: [7, 14, 30]
+  # Analytical relative threshold on s3sf vs explicit reference window mean.
+  # NOT a manufacturer cleaning recommendation.
+  reference_window:
+    start: "2019-01-01"
+    end: "2019-02-28"
+    label: analytical_reference_not_proven_clean
+    available_from: "2019-03-01"
+  threshold_relative_to_reference: 0.85
+  min_history_days: 21
+  recent_trend_window_days: 14
+
+notes:
+  - Uses source_series_id (A01…G03), not unresolved physical stage labels.
+  - Does not re-apply FilmTec TCF to s3sf.
+  - Does not claim absolute cleaning-time validity.
+  - Does not claim synthetic-trained model transfer.

@@ -1,0 +1,86 @@
+# Canonical mapping for Phase 3 synthetic raw measurements.
+# Explicit units; intended for the shared validate/normalise pipeline.
+name: canonical_synthetic_brackish_v1
+schema_id: canonical_synthetic_v1
+source_series_pattern: "S\\d{2}|.+"
+index_column: null
+timestamp:
+  column: date
+  format: ISO8601
+  timezone: UTC
+notes: >
+  Documented brackish demonstration schema. Flow columns are gallons per day (gpd).
+  Concentration is NaCl-equivalent mg/L. Not a validated seawater schema.
+fields:
+  - external_name: date
+    canonical_name: observation_date_calendar
+    unit: { symbol: calendar_date }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: feed_temperature_c
+    canonical_name: temperature_c
+    unit: { symbol: deg_C }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: feed_pressure_psi
+    canonical_name: stage_3_feed_pressure_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: high
+  - external_name: permeate_pressure_psi
+    canonical_name: permeate_pressure_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: device_pressure_drop_psi
+    canonical_name: stage_3_device_pressure_drop_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: high
+  - external_name: permeate_flow_gpd
+    canonical_name: stage_3_permeate_flow_source_unit
+    unit: { symbol: gpd }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: high
+  - external_name: feed_flow_gpd
+    canonical_name: stage_3_feed_flow_source_unit
+    unit: { symbol: gpd }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: high
+  - external_name: concentrate_flow_gpd
+    canonical_name: stage_3_concentrate_flow_source_unit
+    unit: { symbol: gpd }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: high
+  - external_name: feed_concentration_mg_l
+    canonical_name: feed_concentration_mg_l
+    unit: { symbol: mg_L_NaCl_eq }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: permeate_concentration_mg_l
+    canonical_name: permeate_concentration_mg_l
+    unit: { symbol: mg_L_NaCl_eq }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: cip_flag
+    canonical_name: cip_flag_0_1
+    unit: { symbol: flag_0_1 }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high
+  - external_name: days_since_replacement
+    canonical_name: days_since_replacement_d
+    unit: { symbol: day }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: high

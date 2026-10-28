@@ -1,0 +1,8 @@
+DEMO_A:
+  mode: documented
+  provenance: Documented clean reference for the forecast demo (brackish NaCl-equivalent)
+  available_from: '2020-01-01'
+  temperature_c: 25.0
+  ndp_psi: 150.0
+  permeate_flow: 6500.0
+  permeate_flow_unit: gpd

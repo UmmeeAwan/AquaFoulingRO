@@ -1,0 +1,13 @@
+# Example documented reference — replace with plant-validated values before use.
+mode: documented
+provenance: "example-only; replace with start-up report or warranted design values"
+available_from: "2019-01-01"
+prediction_cutoff: null
+temperature_c: 25.0
+ndp_psi: 100.0
+permeate_flow: 350.0
+permeate_flow_unit: gpd
+notes: >
+  Never use first row, dataset maximum, or dss=0 as automatic healthy reference.
+  Do not reset reference after every CIP; partial recovery must remain visible.
+  permeate_flow_unit must be an explicit convertible flow unit (gpd, gpm, or m3/d).

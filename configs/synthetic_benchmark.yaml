@@ -1,0 +1,137 @@
+# Primary Phase 3 synthetic benchmark configuration (reproducible).
+# This is an explicitly documented brackish/NaCl-equivalent demonstration domain.
+# It is NOT a validated seawater model.
+
+name: synthetic_brackish_phase3
+seed: 20261026
+output_dir: artifacts/synthetic
+
+domain:
+  id: brackish_nacl_demo_v1
+  description: >
+    Brackish-water / NaCl-equivalent RO demonstration domain compatible with
+    filmtec_cfc_bar_lt_20000_v1 (C_fc < 20000 mg/L) and filmtec_exponential_tcf_v1.
+  not_seawater: true
+  max_c_fc_mg_l: 20000
+  feed_concentration_mg_l_range: [800, 3500]
+  temperature_c_range: [10, 35]
+  recovery_range: [0.55, 0.80]
+  feed_pressure_psi_range: [120, 280]
+  permeate_pressure_psi: 15.0
+  device_dp_psi: 20.0
+  membrane_area_m2: 37.0
+  # Clean permeability at 25 °C (scenario experimental range, not a plant claim)
+  clean_permeability_gfd_per_psi_at_25c: 0.12
+  literature_supported:
+    - filmtec_exponential_tcf_v1
+    - filmtec_cfc_bar_lt_20000_v1
+    - ndp_filmtec_astm_style
+  experimental_scenario_ranges:
+    - feed_concentration_mg_l_range
+    - recovery_range
+    - clean_permeability_gfd_per_psi_at_25c
+
+reference:
+  mode: documented_clean_by_construction
+  provenance: "synthetic simulator clean state at scenario start (known by construction)"
+  temperature_c: 25.0
+  # NDP and flow filled per series from day-0 clean operating point
+
+simulation:
+  n_days: 180
+  start_date: "2020-01-01"
+  noise_relative_std: 0.01
+  outlier_probability: 0.01
+  missing_probability: 0.02
+  series:
+    - id: S01
+      family: stable
+      split: train
+      seed_offset: 1
+    - id: S02
+      family: gradual
+      split: train
+      seed_offset: 2
+      health_decay_per_day: 0.0015
+    - id: S03
+      family: accelerating
+      split: train
+      seed_offset: 3
+      health_decay_per_day: 0.0008
+      health_accel_per_day2: 0.00002
+    - id: S04
+      family: gradual_constant_pressure
+      split: development
+      seed_offset: 4
+      health_decay_per_day: 0.002
+      operation: constant_pressure
+    - id: S05
+      family: gradual_constant_flow
+      split: development
+      seed_offset: 5
+      health_decay_per_day: 0.0018
+      operation: constant_flow
+      # Target in gpd (consistent with Q = flux_GFD * area_ft2)
+      target_permeate_flow_gpd: 5000.0
+      max_feed_pressure_psi: 300.0
+    - id: S06
+      family: temp_conc_changes
+      split: development
+      seed_offset: 6
+      health_decay_per_day: 0.0012
+      temp_amplitude_c: 5.0
+      conc_amplitude_mg_l: 400.0
+    - id: S07
+      # Genuine intervention-before-crossing: clean_day < would-cross day without CIP.
+      family: partial_cleaning
+      split: test
+      seed_offset: 7
+      health_decay_per_day: 0.003
+      clean_day: 40
+      clean_recovery_fraction: 0.70
+      censor_no_clean_crossing: true
+    - id: S08
+      family: gradual_heldout
+      split: test
+      seed_offset: 8
+      health_decay_per_day: 0.0022
+      continue_past_threshold: true
+    - id: S09
+      family: accelerating_heldout
+      split: test
+      seed_offset: 9
+      health_decay_per_day: 0.001
+      health_accel_per_day2: 0.000025
+      continue_past_threshold: true
+    - id: S10
+      family: stable_heldout
+      split: test
+      seed_offset: 10
+
+forecasting:
+  horizons_days: [7, 14, 30]
+  # Analytical relative-health threshold for the synthetic experiment only.
+  # Chosen as a clear, reproducible 15% decline from the documented clean
+  # reference so threshold-crossing evaluation is possible. It is NOT a
+  # manufacturer cleaning recommendation and does not transfer to plant data.
+  threshold_relative_health: 0.85
+  threshold_justification: >
+    Synthetic-only analytical threshold: relative health 0.85 (= 15% decline
+    from documented clean-by-construction reference). Selected for reproducible
+    threshold-crossing evaluation on the brackish demonstration domain. Not a
+    FilmTec/manufacturer cleaning trigger; not a plant-validated limit.
+  min_history_days: 21
+  recent_trend_window_days: 14
+  # Do not tune on test; development may inform window choice only.
+  chronological_note: >
+    Scenario splits are by behaviour family / seed_offset groups defined above,
+    fixed before baseline evaluation. Prior Phase 3 test metrics were inspected;
+    this corrective pass regenerates baselines without using those scores for tuning.
+
+evaluation:
+  false_warning_definition: >
+    Predicted crossing within horizon while observed trajectory stays above
+    threshold for the full horizon (observable no-crossing case).
+  missed_warning_definition: >
+    Observed crossing within horizon while model predicts no crossing
+    (or null unavailable) for an observable crossing case.

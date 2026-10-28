@@ -1,0 +1,142 @@
+# Orange County RO — schema F–G (117 CSV columns incl. exported index)
+name: ocwd_schema_fg
+schema_id: fg_117
+source_series_pattern: "^[FG][0-9]{2}$"
+index_column: "Unnamed: 0"
+timestamp:
+  column: date
+  format: ISO8601
+  timezone: America/Los_Angeles
+notes: >
+  Separate adapter mapping for F–G schema. Stage-3 signals selected from
+  columns present in this schema (e.g. perm_flow_stage_3). source_series_id
+  preserved; filename/stage semantics unresolved.
+
+fields:
+  - external_name: date
+    canonical_name: observation_date_calendar
+    unit: { symbol: calendar_date }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: documented
+
+  - external_name: temp_c
+    canonical_name: temperature_c
+    unit: { symbol: deg_C }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: inferred
+
+  - external_name: feed_press_stage_1
+    canonical_name: stage_1_feed_pressure_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: stage_1
+    confidence: inferred
+    notes: F–G schema uses feed_press_stage_1 rather than feed_psi.
+
+  - external_name: perm_press_unit
+    canonical_name: permeate_pressure_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: inferred
+
+  - external_name: perm_flow_stage_3
+    canonical_name: stage_3_permeate_flow_source_unit
+    unit: { symbol: unresolved_flow }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: unresolved
+
+  - external_name: stage_3_flux
+    canonical_name: stage_3_flux_source_unit
+    unit: { symbol: unresolved_flux }
+    kind: derived
+    measurement_scope: stage_3
+    confidence: unresolved
+
+  - external_name: stage_3_net_driving_press
+    canonical_name: stage_3_ndp_source_calculated
+    unit: { symbol: unresolved_pressure }
+    kind: derived
+    measurement_scope: stage_3
+    confidence: unresolved
+    notes: SOURCE-CALCULATED NDP.
+
+  - external_name: s3sf
+    canonical_name: stage_3_specific_flux_source_calculated
+    unit: { symbol: unresolved_specific_flux }
+    kind: derived
+    measurement_scope: stage_3
+    confidence: unresolved
+
+  - external_name: tcf_water
+    canonical_name: tcf_water_source_calculated
+    unit: { symbol: "1" }
+    kind: derived
+    measurement_scope: whole_unit
+    confidence: inferred
+
+  - external_name: perm_ec
+    canonical_name: permeate_conductivity_source_unit
+    unit: { symbol: unresolved_conductivity }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: unresolved
+
+  - external_name: perm_ec_stage_3
+    canonical_name: stage_3_permeate_conductivity_source_unit
+    unit: { symbol: unresolved_conductivity }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: unresolved
+
+  - external_name: rof_toc_avg
+    canonical_name: ro_feed_toc_avg_mg_per_L
+    unit: { symbol: mg_per_L }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: documented
+
+  - external_name: cip
+    canonical_name: cip_flag_0_1
+    unit: { symbol: flag_0_1 }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: documented
+
+  - external_name: dss
+    canonical_name: days_since_cleaning_d
+    unit: { symbol: d }
+    kind: derived
+    measurement_scope: whole_unit
+    confidence: documented
+
+  - external_name: days_since_replacement
+    canonical_name: days_since_replacement_d
+    unit: { symbol: d }
+    kind: derived
+    measurement_scope: whole_unit
+    confidence: documented
+
+  - external_name: stage_3_d_p
+    canonical_name: stage_3_device_pressure_drop_psi
+    unit: { symbol: psi }
+    kind: measured
+    measurement_scope: stage_3
+    confidence: inferred
+
+  - external_name: pf
+    canonical_name: unit_permeate_flow_source_unit
+    unit: { symbol: unresolved_flow }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: unresolved
+
+  - external_name: ff
+    canonical_name: unit_feed_flow_source_unit
+    unit: { symbol: unresolved_flow }
+    kind: measured
+    measurement_scope: whole_unit
+    confidence: unresolved

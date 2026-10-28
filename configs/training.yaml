@@ -1,0 +1,50 @@
+# Phase 4 training configuration for the local-linear-trend Kalman candidate.
+# Fits shared noise parameters on designated synthetic *train* series only.
+# Development is used solely for a small, recorded initialisation-grid selection.
+# Test series are never used for fitting or selection.
+
+name: phase4_llt_training
+random_seed: 20261027
+synthetic_benchmark_config: configs/synthetic_benchmark.yaml
+regenerate_synthetic: true
+
+artifact_path: artifacts/models/llt_relative_health_v1.json
+training_report_path: reports/phase4/training_report.json
+
+# Serving / inference policy stored with training for reproducibility
+min_history_observations: 5
+
+optimizer:
+  maxiter: 250
+
+# Small development selection grid (initialisation only). Fitted on train;
+# scored on development log-likelihood; frozen before test evaluation.
+development_selection_grid:
+  - name: default_init
+    initial:
+      r: 0.001
+      q_level: 1.0e-5
+      q_slope: 1.0e-7
+      p0_level: 0.01
+      p0_slope: 0.0001
+  - name: higher_obs_noise
+    initial:
+      r: 0.005
+      q_level: 1.0e-5
+      q_slope: 1.0e-7
+      p0_level: 0.01
+      p0_slope: 0.0001
+  - name: higher_slope_process
+    initial:
+      r: 0.001
+      q_level: 1.0e-5
+      q_slope: 5.0e-7
+      p0_level: 0.01
+      p0_slope: 0.0001
+
+notes: >
+  Training objective = maximize sum of Gaussian Kalman innovation
+  log-likelihoods across independent train segments (series/segment resets).
+  Variance parameters are exp-reparameterised to stay strictly positive.
+  No simulator latent health, decay parameters, scenario labels, future
+  observations, or test results enter training.

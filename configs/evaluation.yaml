@@ -1,0 +1,32 @@
+# Phase 4 evaluation configuration.
+# Compares the frozen trained LLT artifact against persistence and recent
+# linear trend using the corrected rolling-origin pipeline.
+# Development metrics are reported for transparency; test is labelled as an
+# inspected benchmark (previously viewed in Phase 3), not a pristine holdout.
+# OCWD is intentionally absent — do not present synthetic results as OCWD transfer.
+
+name: phase4_llt_evaluation
+synthetic_benchmark_config: configs/synthetic_benchmark.yaml
+regenerate_synthetic: false
+artifact_path: artifacts/models/llt_relative_health_v1.json
+report_dir: reports/phase4
+
+# Must match the frozen serving choice from training.yaml
+min_history_observations: 5
+recent_trend_window_days: 14
+
+serving:
+  artifact_path: artifacts/models/llt_relative_health_v1.json
+  forecast_horizons_days: [7, 14, 30]
+  threshold_relative_health: 0.85
+  reference_policy: documented_clean_by_construction
+  min_history_days: 21
+  min_history_observations: 5
+  gap_policy: >
+    Calendar gaps > 1 day and CIP/replacement resets split segments
+    (SegmentRuleConfig). The LLT filter uses elapsed calendar days within a
+    segment; it does not interpolate across gaps or concatenate unrelated series.
+
+notes: >
+  No post-test retuning. Report honestly if a baseline outperforms the trained
+  candidate. Interval coverage is theoretical, not calibrated confidence.

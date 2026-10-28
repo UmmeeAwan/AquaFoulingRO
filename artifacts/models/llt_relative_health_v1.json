@@ -1,0 +1,305 @@
+{
+  "artifact_schema_version": "1.0.0",
+  "assumptions": [
+    "Measured relative_health from shared normalisation pipeline only.",
+    "No latent simulator health, decay, scenario labels, or future rows.",
+    "Filter resets between series and intervention/calendar-gap segments.",
+    "Forecasts assume no future cleaning intervention.",
+    "Improving slopes are not clipped.",
+    "Gaussian innovation intervals are model-based, not calibrated confidence.",
+    "Prior mean health=1.0 (clean-reference scale) at segment start; mid-fouling histories are not re-centred."
+  ],
+  "convergence": {
+    "converged_flag": true,
+    "final_loglik": 1342.8583327302163,
+    "final_negative_loglik": -1342.8583327302163,
+    "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+    "n_function_evaluations": 384,
+    "n_iterations": 34,
+    "n_training_observations": 527,
+    "n_training_segments": 3,
+    "objective_trace_tail": [
+      -1342.8158661235043,
+      -1342.8207335413172,
+      -1342.8217083835384,
+      -1342.8237892667469,
+      -1342.8306670636182,
+      -1342.8408243264244,
+      -1342.8487917548855,
+      -1342.8543849028756,
+      -1342.855588732679,
+      -1342.8564403492323,
+      -1342.8572183743186,
+      -1342.8572525024429,
+      -1342.857781169493,
+      -1342.8580550499812,
+      -1342.8582505494692,
+      -1342.8582854414321,
+      -1342.8583192494773,
+      -1342.8583292806652,
+      -1342.8583327085453,
+      -1342.8583327302163
+    ],
+    "optimizer": "scipy.optimize.minimize/L-BFGS-B",
+    "parameterization": "log-variance (exp) with clip to [1e-12, 1e2]",
+    "status": 0,
+    "success": true
+  },
+  "development_selection_note": "A small grid of initialisation settings was fitted on training data only; only optimiser-successful (converged_flag=True) candidates were eligible for development log-likelihood selection, frozen before test evaluation. The inspected Phase 3 test set remains an inspected benchmark, not a pristine unseen holdout.",
+  "development_series_ids": [
+    "S04",
+    "S05",
+    "S06"
+  ],
+  "held_out_from_training": [
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S09",
+    "S10"
+  ],
+  "initialisation_policy": "Prior mean health=1.0 (clean-reference scale), prior slope=0; P0=diag(p0_level, p0_slope). Filter state resets between independent series and between intervention/calendar-gap segments. Elapsed calendar days drive F(dt)/Q(dt); missing observations are predict-only.",
+  "model_id": "llt_relative_health_v1",
+  "model_type": "local_linear_trend_kalman",
+  "model_version": "llt_relative_health_v1",
+  "normalisation_method_id": "independent_q_norm_filmtec_tcf_v1",
+  "normalisation_version": "2.0.0",
+  "parameters": {
+    "p0_level": 1.378627774778719e-05,
+    "p0_slope": 1.076352402268212e-06,
+    "q_level": 5.144950989621459e-11,
+    "q_slope": 6.92841751668232e-09,
+    "r": 0.0003230172313658395
+  },
+  "provenance": {
+    "benchmark_config_hash": "f41c1e2f17cf345192d191ffbd1be35cad936e9009f84dbb51189cedadaed6a0",
+    "content_hashes": {
+      "csv:S01": "002ef9bf9a8dfd1c04de1db436ce607ca64ca81642ab32658235b863fc2afc4c",
+      "csv:S02": "af71b98980c40dfe549bd7ffd1559e346d700bd204e9e0ab3a2fe05023da42b9",
+      "csv:S03": "7e19392a04209f89b253389f9e49b8ffb7f3f1769d838b3c3d0fb983d6049862",
+      "mapping": "c058a097316bff54e543c5b24c6b14f6c20f455f29fc65156a10b41ae725275d",
+      "reference:S01": "68b1fc7ef44dcc8497ab1149651ae19d92167d2cf8d295fb79945b14e192ffc2",
+      "reference:S02": "68b1fc7ef44dcc8497ab1149651ae19d92167d2cf8d295fb79945b14e192ffc2",
+      "reference:S03": "68b1fc7ef44dcc8497ab1149651ae19d92167d2cf8d295fb79945b14e192ffc2"
+    },
+    "cpu_only": true,
+    "hash_policy": "training_data_hash is SHA-256 over the sorted JSON map of SHA-256 content digests of training CSVs, reference YAMLs, and the adapter mapping. Config hashes are file content digests. Hashes are never fabricated for missing files.",
+    "mapping_path": "/home/ummeeawan/Desktop/Projects/AquaFoulingRO/configs/canonical_synthetic_schema.yaml",
+    "no_simulator_latent_inputs": true,
+    "synthetic_benchmark_config": "configs/synthetic_benchmark.yaml",
+    "test_series_ids_not_used": [
+      "S07",
+      "S08",
+      "S09",
+      "S10"
+    ],
+    "training_config": "configs/training.yaml"
+  },
+  "random_seed": 20261027,
+  "selected_settings": {
+    "all_setting_convergence": {
+      "default_init": {
+        "converged_flag": true,
+        "final_loglik": 1342.8583327302163,
+        "final_negative_loglik": -1342.8583327302163,
+        "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+        "n_function_evaluations": 384,
+        "n_iterations": 34,
+        "n_training_observations": 527,
+        "n_training_segments": 3,
+        "objective_trace_tail": [
+          -1342.8158661235043,
+          -1342.8207335413172,
+          -1342.8217083835384,
+          -1342.8237892667469,
+          -1342.8306670636182,
+          -1342.8408243264244,
+          -1342.8487917548855,
+          -1342.8543849028756,
+          -1342.855588732679,
+          -1342.8564403492323,
+          -1342.8572183743186,
+          -1342.8572525024429,
+          -1342.857781169493,
+          -1342.8580550499812,
+          -1342.8582505494692,
+          -1342.8582854414321,
+          -1342.8583192494773,
+          -1342.8583292806652,
+          -1342.8583327085453,
+          -1342.8583327302163
+        ],
+        "optimizer": "scipy.optimize.minimize/L-BFGS-B",
+        "parameterization": "log-variance (exp) with clip to [1e-12, 1e2]",
+        "status": 0,
+        "success": true
+      },
+      "higher_obs_noise": {
+        "converged_flag": true,
+        "final_loglik": 1342.8583474008042,
+        "final_negative_loglik": -1342.8583474008042,
+        "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+        "n_function_evaluations": 258,
+        "n_iterations": 37,
+        "n_training_observations": 527,
+        "n_training_segments": 3,
+        "objective_trace_tail": [
+          -1342.8424411713786,
+          -1342.8439580480217,
+          -1342.8504822109037,
+          -1342.852929561474,
+          -1342.8537999032383,
+          -1342.8538413432989,
+          -1342.853849251471,
+          -1342.8538756972623,
+          -1342.8539660720928,
+          -1342.854107612136,
+          -1342.8545939232774,
+          -1342.8554092986355,
+          -1342.8564348003895,
+          -1342.857412329019,
+          -1342.8580273818209,
+          -1342.8581172194665,
+          -1342.8582450350077,
+          -1342.858332936466,
+          -1342.858347400804,
+          -1342.8583474008042
+        ],
+        "optimizer": "scipy.optimize.minimize/L-BFGS-B",
+        "parameterization": "log-variance (exp) with clip to [1e-12, 1e2]",
+        "status": 0,
+        "success": true
+      },
+      "higher_slope_process": {
+        "converged_flag": true,
+        "final_loglik": 1342.858300948113,
+        "final_negative_loglik": -1342.858300948113,
+        "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+        "n_function_evaluations": 300,
+        "n_iterations": 41,
+        "n_training_observations": 527,
+        "n_training_segments": 3,
+        "objective_trace_tail": [
+          -1342.8575263923517,
+          -1342.8575457473203,
+          -1342.8575481341147,
+          -1342.85754859575,
+          -1342.857549443149,
+          -1342.8575561402631,
+          -1342.8576045783705,
+          -1342.857835002845,
+          -1342.8580274774051,
+          -1342.858029243073,
+          -1342.8580715699177,
+          -1342.8581689679568,
+          -1342.8581924522223,
+          -1342.8582233840318,
+          -1342.858298145937,
+          -1342.8582986637784,
+          -1342.8582990192656,
+          -1342.8583006048962,
+          -1342.8583008569274,
+          -1342.858300948113
+        ],
+        "optimizer": "scipy.optimize.minimize/L-BFGS-B",
+        "parameterization": "log-variance (exp) with clip to [1e-12, 1e2]",
+        "status": 0,
+        "success": true
+      }
+    },
+    "development_selection": {
+      "candidates": [
+        {
+          "converged": true,
+          "convergence_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "development_loglik": 1341.9375122486422,
+          "excluded_from_selection": false,
+          "n_development_observations": 528,
+          "parameters": {
+            "p0_level": 1.378627774778719e-05,
+            "p0_slope": 1.076352402268212e-06,
+            "q_level": 5.144950989621459e-11,
+            "q_slope": 6.92841751668232e-09,
+            "r": 0.0003230172313658395
+          },
+          "setting": "default_init",
+          "spec": {
+            "initial": {
+              "p0_level": 0.01,
+              "p0_slope": 0.0001,
+              "q_level": 1e-05,
+              "q_slope": 1e-07,
+              "r": 0.001
+            },
+            "name": "default_init"
+          }
+        },
+        {
+          "converged": true,
+          "convergence_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "development_loglik": 1341.936251330277,
+          "excluded_from_selection": false,
+          "n_development_observations": 528,
+          "parameters": {
+            "p0_level": 1.374351702351197e-05,
+            "p0_slope": 1.0759936150640418e-06,
+            "q_level": 2.542471560433984e-11,
+            "q_slope": 6.93175957967199e-09,
+            "r": 0.00032305059654415855
+          },
+          "setting": "higher_obs_noise",
+          "spec": {
+            "initial": {
+              "p0_level": 0.01,
+              "p0_slope": 0.0001,
+              "q_level": 1e-05,
+              "q_slope": 1e-07,
+              "r": 0.005
+            },
+            "name": "higher_obs_noise"
+          }
+        },
+        {
+          "converged": true,
+          "convergence_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+          "development_loglik": 1341.9359223152696,
+          "excluded_from_selection": false,
+          "n_development_observations": 528,
+          "parameters": {
+            "p0_level": 1.379424130510138e-05,
+            "p0_slope": 1.0759545496688381e-06,
+            "q_level": 9.797220057886558e-11,
+            "q_slope": 6.930433946509711e-09,
+            "r": 0.00032302302512546006
+          },
+          "setting": "higher_slope_process",
+          "spec": {
+            "initial": {
+              "p0_level": 0.01,
+              "p0_slope": 0.0001,
+              "q_level": 1e-05,
+              "q_slope": 5e-07,
+              "r": 0.001
+            },
+            "name": "higher_slope_process"
+          }
+        }
+      ],
+      "selected": "default_init",
+      "selection_rule": "Among candidates with converged_flag=True only; highest development innovation log-likelihood wins."
+    },
+    "min_history_observations": 5,
+    "selected_grid_name": "default_init"
+  },
+  "target": "relative_health",
+  "training_config_hash": "8c34000f23887a91b0c75237594eff24e271caafe8ad0a3a40464f93712134e7",
+  "training_data_hash": "b165a1b060d9eb8dfaae0b00659d24db65340bf9b3bb18566da92dd7ab8bef92",
+  "training_objective": "Maximize sum of Gaussian Kalman innovation log-likelihoods over designated training segments only (negative log-likelihood minimized via L-BFGS-B on log-variance parameters).",
+  "training_series_ids": [
+    "S01",
+    "S02",
+    "S03"
+  ]
+}

@@ -1,0 +1,75 @@
+# Local environments
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Secrets / credentials (never commit)
+*.pem
+*.key
+*.p12
+credentials.json
+secrets/
+.secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg
+
+# Temporary / local scratch outputs
+tmp/
+.tmp/
+*.tmp
+*.log
+
+# Raw and extracted data (keep fixtures under tests/)
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+data/extracted/
+!data/extracted/.gitkeep
+# Bulky local dumps / mirrors (not part of the delivery tree)
+data/gptoutput/
+*.zip
+*.rda
+*.tar
+*.tar.gz
+*.tgz
+*.csv
+!tests/fixtures/**/*.csv
+!examples/**/*.csv
+
+# Generated artefacts — keep the default serving model
+artifacts/**
+!artifacts/.gitkeep
+!artifacts/models/
+!artifacts/models/.gitkeep
+!artifacts/models/llt_relative_health_v1.json
+
+# Generated reports — retain final evaluation / benchmark evidence
+# (phase-named paths are chronological evidence locations, not obsolete junk)
+reports/**
+!reports/.gitkeep
+!reports/phase3/
+!reports/phase3/**
+!reports/phase4/
+!reports/phase4/**
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

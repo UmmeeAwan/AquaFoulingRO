@@ -1,0 +1,911 @@
+{
+  "info": {
+    "name": "Aqua Fouling RO",
+    "description": "Assessment API \u2014 CSV-first forecast + assisted mapping + batch.\n\nOptional multipart response_format=json|csv (default json). CSV downloads: Save Response in Postman (Send and Download).\nErrors stay JSON even when csv was requested.\nbase_url default http://localhost:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET /health",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('liveness ok', () => pm.expect(b.status).to.eql('ok'));",
+              "pm.test('no phase field', () => pm.expect(b).to.not.have.property('phase'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/health"
+      }
+    },
+    {
+      "name": "GET /ready",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('ready true', () => pm.expect(b.ready).to.eql(true));",
+              "pm.test('model version', () => pm.expect(b.model_version).to.eql('llt_relative_health_v1'));",
+              "pm.test('no artifact path', () => pm.expect(b).to.not.have.property('artifact_path'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/ready"
+      }
+    },
+    {
+      "name": "GET /v1/capabilities",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('forecast available', () => pm.expect(b.endpoints.forecast).to.eql(true));",
+              "pm.test('no phase field', () => pm.expect(b).to.not.have.property('phase'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/v1/capabilities"
+      }
+    },
+    {
+      "name": "POST /v1/validate (success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('valid or ok status', () => pm.expect(['ok','valid','warnings']).to.include(b.status));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/validate"
+      }
+    },
+    {
+      "name": "POST /v1/normalise (success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('status ok', () => pm.expect(b.status).to.eql('ok'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/normalise"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (A CSV-only \u2192 reference_required)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));",
+              "const b = pm.response.json();",
+              "pm.test('reference_required', () => pm.expect(b.status).to.eql('reference_required'));",
+              "pm.test('error code', () => pm.expect(b.error.code).to.eql('reference_required'));",
+              "pm.test('resolved mapping', () => pm.expect(b.mapping.resolved.length).to.be.above(0));",
+              "pm.test('window unavailable', () => pm.expect(b.error.details.historical_window_reference.available).to.eql(false));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "Only CSV required. Recognised schema maps columns; forecast blocked until reference supplied."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (A CSV + reference defaults)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('ok', () => pm.expect(b.status).to.eql('ok'));",
+              "pm.test('default series', () => pm.expect(b.result.source_series_id).to.eql('uploaded_series'));",
+              "pm.test('horizon 14', () => pm.expect(b.result.horizon_days).to.eql(14));",
+              "pm.test('resolved mapping', () => pm.expect(b.metadata.mapping.resolved.length).to.be.above(0));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml (YAML preferred)",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "CSV + documented reference; series/mapping/horizon use defaults."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (B mapping_json correction)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('mapping_json', () => pm.expect((b.metadata && b.metadata.mapping && b.metadata.mapping.source) || b.mapping_source).to.eql('mapping_json'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "mapping_json",
+              "type": "text",
+              "value": "{\"timestamp_column\": \"observation_date\", \"fields\": [{\"external_name\": \"observation_date\", \"canonical_name\": \"observation_date_calendar\", \"unit\": \"calendar_date\", \"measurement_scope\": \"whole_unit\"}, {\"external_name\": \"temperature_c\", \"canonical_name\": \"temperature_c\", \"unit\": \"deg_C\", \"measurement_scope\": \"whole_unit\"}, {\"external_name\": \"feed_pressure_psi\", \"canonical_name\": \"stage_3_feed_pressure_psi\", \"unit\": \"psi\", \"measurement_scope\": \"stage_3\"}, {\"external_name\": \"permeate_pressure_psi\", \"canonical_name\": \"permeate_pressure_psi\", \"unit\": \"psi\", \"measurement_scope\": \"whole_unit\"}, {\"external_name\": \"device_dp_psi\", \"canonical_name\": \"stage_3_device_pressure_drop_psi\", \"unit\": \"psi\", \"measurement_scope\": \"stage_3\"}, {\"external_name\": \"permeate_flow_gpd\", \"canonical_name\": \"stage_3_permeate_flow_source_unit\", \"unit\": \"gpd\", \"measurement_scope\": \"stage_3\"}, {\"external_name\": \"feed_flow_gpd\", \"canonical_name\": \"stage_3_feed_flow_source_unit\", \"unit\": \"gpd\", \"measurement_scope\": \"stage_3\"}, {\"external_name\": \"feed_concentration_mg_l\", \"canonical_name\": \"feed_concentration_mg_l\", \"unit\": \"mg_L_NaCl_eq\", \"measurement_scope\": \"whole_unit\"}, {\"external_name\": \"cip\", \"canonical_name\": \"cip_flag_0_1\", \"unit\": \"flag_0_1\", \"measurement_scope\": \"whole_unit\"}]}"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "Swagger-friendly mapping_json instead of YAML upload."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (C reference required reminder)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));",
+              "const b = pm.response.json();",
+              "pm.test('code', () => pm.expect(b.code).to.eql('reference_required'));",
+              "pm.test('actionable', () => pm.expect(b.actionable_correction).to.include('reference'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "Same as A \u2014 documents that forecast needs documented reference YAML."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (explicit fields no-crossing)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('ok', () => pm.expect(b.status).to.eql('ok'));",
+              "pm.test('no crossing', () => pm.expect(b.crossing_status).to.eql('no_crossing_in_horizon'));",
+              "pm.test('model', () => pm.expect(b.model.model_version).to.eql('llt_relative_health_v1'));",
+              "pm.test('full history', () => pm.expect(b.n_normalised_observations).to.eql(35));",
+              "pm.test('horizon points', () => pm.expect(b.result.forecast.length).to.eql(14));",
+              "pm.test('latent interval', () => pm.expect(b.forecast[0]).to.have.property('latent_health_interval'));",
+              "pm.test('obs interval', () => pm.expect(b.forecast[0]).to.have.property('future_observation_interval'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            },
+            {
+              "key": "threshold",
+              "value": "0.85",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (already-crossed)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('crossed', () => pm.expect(b.crossing_status).to.eql('crossed_at_origin'));",
+              "pm.test('days 0', () => pm.expect(b.days_to_threshold).to.eql(0));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/postman/already_crossed.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            },
+            {
+              "key": "threshold",
+              "value": "0.85",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (insufficient-history)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('client error', () => pm.expect(pm.response.code).to.be.oneOf([400, 422]));",
+              "const b = pm.response.json();",
+              "pm.test('error payload', () => pm.expect(b).to.have.property('error'));",
+              "pm.test('code', () => pm.expect(b.error.code).to.eql('forecast_unavailable'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/postman/insufficient_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (invalid-unit mapping)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('client error', () => pm.expect(pm.response.code).to.be.oneOf([400, 422]));",
+              "const b = pm.response.json();",
+              "pm.test('error payload', () => pm.expect(b).to.have.property('error'));",
+              "pm.test('validation', () => pm.expect(b.error.code).to.be.oneOf(['validation_failed','forecast_validation_error']));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select examples/forecast/postman/invalid_units_mapping.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (malformed mapping YAML)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 400', () => pm.response.to.have.status(400));",
+              "const b = pm.response.json();",
+              "pm.test('error payload', () => pm.expect(b).to.have.property('error'));",
+              "pm.test('malformed', () => pm.expect(b.error.code).to.match(/malformed/));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "source_series_id",
+              "value": "DEMO",
+              "type": "text"
+            },
+            {
+              "key": "mapping",
+              "description": "Select examples/forecast/postman/malformed_mapping.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast"
+      }
+    },
+    {
+      "name": "POST /v1/forecast (mapping_required ambiguous units)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 422', () => pm.response.to.have.status(422));",
+              "const b = pm.response.json();",
+              "pm.test('mapping_required', () => pm.expect(b.status).to.eql('mapping_required'));",
+              "pm.test('template present', () => pm.expect(b.mapping_template_yaml).to.be.a('string').and.include('assisted_mapping'));",
+              "pm.test('headers detected', () => pm.expect(b.error.details.detected_headers).to.include('permeate_flow'));",
+              "pm.test('unresolved', () => pm.expect(b.error.details.unresolved_required_fields.length).to.be.above(0));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/postman/ambiguous_units.csv",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "Ambiguous permeate_flow \u2192 mapping_required + YAML template in JSON (no server download URL)."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (completed assisted mapping + reference)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('ok', () => pm.expect(b.status).to.eql('ok'));",
+              "pm.test('model', () => pm.expect(b.metadata.model.model_version).to.eql('llt_relative_health_v1'));",
+              "pm.test('forecast length', () => pm.expect(b.result.forecast.length).to.eql(14));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv (unit-bearing; mapping still accepted)",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "mapping",
+              "description": "Select configs/canonical_generic_schema.yaml (completed mapping)",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "Completed mapping YAML + matching documented reference \u2192 forecast."
+      }
+    },
+    {
+      "name": "POST /v1/forecast/batch (success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('overall ok', () => pm.expect(b.overall_status).to.eql('ok'));",
+              "pm.test('two series', () => pm.expect(b.summary.counts.total).to.eql(2));",
+              "pm.test('both ok', () => pm.expect(b.summary.counts.ok).to.eql(2));",
+              "pm.test('ids present', () => { const ids = b.results.map(r => r.source_series_id); pm.expect(ids).to.include.members(['DEMO_A','DEMO_B']); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/batch_two_series.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "references",
+              "description": "Select examples/forecast/batch_references.yaml",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast/batch",
+        "description": "Homogeneous batch CSV + per-series references YAML. HTTP 200 overall_status=ok."
+      }
+    },
+    {
+      "name": "POST /v1/forecast/batch (partial_success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "pm.test('partial', () => pm.expect(b.overall_status).to.eql('partial_success'));",
+              "pm.test('one ok', () => pm.expect(b.summary.counts.ok).to.eql(1));",
+              "pm.test('one ref required', () => pm.expect(b.summary.counts.reference_required).to.eql(1));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/batch_two_series.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "references",
+              "description": "Select examples/forecast/batch_references_partial.yaml (DEMO_A only)",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast/batch",
+        "description": "Valid batch with only one series referenced \u2192 HTTP 200 partial_success (not 422)."
+      }
+    },
+    {
+      "name": "POST /v1/forecast (CSV download)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('csv content-type', () => pm.expect(pm.response.headers.get('Content-Type')).to.match(/text\\/csv/));",
+              "pm.test('attachment', () => pm.expect(pm.response.headers.get('Content-Disposition')).to.include('forecast.csv'));",
+              "pm.test('header row', () => pm.expect(pm.response.text()).to.match(/^source_series_id,/));",
+              "pm.test('14 data rows', () => pm.expect(pm.response.text().trim().split('\\n').length).to.eql(15));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/demo_history.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "reference",
+              "description": "Select examples/forecast/reference.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "horizon_days",
+              "value": "14",
+              "type": "text"
+            },
+            {
+              "key": "response_format",
+              "value": "csv",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast",
+        "description": "response_format=csv \u2192 text/csv attachment forecast.csv. In Postman: Send and Download / Save Response."
+      }
+    },
+    {
+      "name": "POST /v1/forecast/batch (CSV download)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('csv content-type', () => pm.expect(pm.response.headers.get('Content-Type')).to.match(/text\\/csv/));",
+              "pm.test('attachment', () => pm.expect(pm.response.headers.get('Content-Disposition')).to.include('forecast_batch.csv'));",
+              "pm.test('28 data rows', () => pm.expect(pm.response.text().trim().split('\\n').length).to.eql(29));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/batch_two_series.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "references",
+              "description": "Select examples/forecast/batch_references.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "response_format",
+              "value": "csv",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast/batch",
+        "description": "Batch CSV attachment forecast_batch.csv (28 rows for two \u00d7 14-day series)."
+      }
+    },
+    {
+      "name": "POST /v1/forecast/batch (CSV partial_success)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const lines = pm.response.text().trim().split('\\n');",
+              "pm.test('has failure row', () => pm.expect(pm.response.text()).to.include('reference_required'));",
+              "pm.test('more than 14 rows', () => pm.expect(lines.length).to.be.above(15));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "csv",
+              "description": "Select examples/forecast/batch_two_series.csv",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "references",
+              "description": "Select examples/forecast/batch_references_partial.yaml",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "response_format",
+              "value": "csv",
+              "type": "text"
+            }
+          ]
+        },
+        "url": "{{base_url}}/v1/forecast/batch",
+        "description": "Partial batch CSV: success daily rows + one failure row for DEMO_B."
+      }
+    }
+  ]
+}

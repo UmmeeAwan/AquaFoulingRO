@@ -1,0 +1,40 @@
+# Server-side forecast serving defaults (not caller-supplied artifact paths).
+# Loaded by get_settings() / apply_serving_yaml(); AQUA_* env vars override.
+# Restart the service after changing artifact_path.
+
+artifact_path: artifacts/models/llt_relative_health_v1.json
+default_mapping: configs/canonical_generic_schema.yaml
+
+# Validated against documented limits in Settings / forecast service.
+allowed_horizons_days: [7, 14, 30]
+default_horizon_days: 14
+min_horizon_days: 1
+max_horizon_days: 30
+
+default_threshold_relative_health: 0.85
+min_threshold_relative_health: 0.50
+max_threshold_relative_health: 0.99
+
+min_history_days: 21
+min_history_observations: 5
+
+max_upload_bytes: 5242880
+max_csv_rows: 5000
+max_batch_series: 50
+
+threshold_provenance: >
+  Relative-health threshold on independently normalised permeate flow versus
+  the caller-supplied documented reference. Default 0.85 matches the synthetic
+  analytical threshold (15% decline from clean reference). It is NOT a
+  manufacturer cleaning recommendation and is not plant-validated.
+
+domain_limits: >
+  Brackish / NaCl-equivalent demonstration domain compatible with
+  filmtec_cfc_bar_lt_20000_v1 (C_fc < 20000 mg/L). Not a validated seawater
+  or real-plant model.
+
+gap_policy: >
+  Calendar gaps > 1 day and CIP/replacement resets split operational segments.
+  Forecasts use only the latest applicable segment. Missing observations are
+  not interpolated. Pre-cleaning history is not borrowed when post-cleaning
+  history is insufficient.

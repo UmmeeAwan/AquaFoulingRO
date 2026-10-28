@@ -1,0 +1,171 @@
+{
+  "phase": 2,
+  "scientific_sources": [
+    {
+      "id": "filmtec_609_02084",
+      "title": "FILMTEC Membranes System Operation: Record Keeping",
+      "form": "609-02084-0905",
+      "url": "https://www.bigbrandwater.com/assets/library/filmtec/filmtec-record-keeping.pdf",
+      "network_access": "fetched_successfully_during_phase2",
+      "equations": [
+        {
+          "name": "filmtec_exponential_tcf_v1",
+          "equation": "TCF=EXP[2640*(1/298-1/(273+T))] (T>=25°C); EXP[3020*(1/298-1/(273+T))] (T<=25°C)",
+          "units": "T in °C; TCF dimensionless; TCF(25°C)=1",
+          "validity": "As stated in FilmTec record-keeping excerpt",
+          "assumptions": ["T_ref = 25 °C", "TCF := permeability(T)/permeability(T_ref)"]
+        },
+        {
+          "name": "filmtec_cfc_bar_lt_20000_v1",
+          "equation": "pi_bar = C_fc * (T_C + 320) / 491000",
+          "units": "C_fc mg/L; T °C; pi bar",
+          "validity": "C_fc < 20000 mg/L per excerpt",
+          "assumptions": [
+            "Concentration defined as used in FilmTec example (TDS-like mg/L)",
+            "Not labelled universally valid for seawater or wastewater"
+          ]
+        },
+        {
+          "name": "normalised_permeate_flow",
+          "equation": "Q_s = Q_o * (NDP_s/NDP_o) * (TCF_s/TCF_o)",
+          "units": "consistent pressure and flow units",
+          "validity": "FilmTec / ASTM D4516-style standardisation structure",
+          "assumptions": ["Positive NDP", "Positive TCF", "No double temperature correction"]
+        }
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "external_name": "date",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "observation_date_calendar",
+      "unit": "calendar_date",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "orange_county_ro.Rd",
+      "confidence": "documented",
+      "assumptions": ["Adapter timezone America/Los_Angeles is declared intent"]
+    },
+    {
+      "external_name": "temp_c",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "temperature_c",
+      "unit": "deg_C",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "column_name_suffix_c",
+      "confidence": "inferred",
+      "assumptions": []
+    },
+    {
+      "external_name": "feed_psi",
+      "schemas": ["ae_128"],
+      "canonical_name": "feed_pressure_psi",
+      "unit": "psi",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "column_name_suffix_psi",
+      "confidence": "inferred",
+      "assumptions": ["whole_unit_scope"]
+    },
+    {
+      "external_name": "rof_toc_avg",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "ro_feed_toc_avg_mg_per_L",
+      "unit": "mg_per_L",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "orange_county_ro.Rd",
+      "confidence": "documented",
+      "assumptions": []
+    },
+    {
+      "external_name": "perm_ec",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "permeate_conductivity_source_unit",
+      "unit": "unresolved_conductivity",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "Rd_ec_means_conductivity",
+      "confidence": "unresolved",
+      "assumptions": ["conductivity_is_not_tds", "no_silent_coefficient"]
+    },
+    {
+      "external_name": "tcf_water",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "tcf_water_source_calculated",
+      "unit": "1",
+      "conversion": null,
+      "kind": "source_calculated",
+      "evidence_source": "column_name_tcf",
+      "confidence": "inferred",
+      "assumptions": ["not_assumed_equal_to_filmtec_exponential_tcf_v1", "no_double_correction"]
+    },
+    {
+      "external_name": "stage_3_net_driving_press",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "stage_3_ndp_source_calculated",
+      "unit": "unresolved_pressure",
+      "conversion": null,
+      "kind": "source_calculated",
+      "evidence_source": "CSV",
+      "confidence": "unresolved",
+      "assumptions": ["distinct_from_physics_module_ndp"]
+    },
+    {
+      "external_name": "s3sf",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "stage_3_specific_flux_source_calculated",
+      "unit": "unresolved_specific_flux",
+      "conversion": null,
+      "kind": "source_calculated",
+      "evidence_source": "orange_county_ro.Rd",
+      "confidence": "unresolved",
+      "assumptions": []
+    },
+    {
+      "external_name": "stage_2_3_press",
+      "schemas": ["ae_128"],
+      "canonical_name": "stage_3_feed_pressure_psi",
+      "unit": "psi",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "column_name_plus_diagram_investigation",
+      "confidence": "inferred",
+      "assumptions": ["treated_as_stage_3_feed_pressure_pending_PID_confirmation"]
+    },
+    {
+      "external_name": "cip",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "cip_flag_0_1",
+      "unit": "flag_0_1",
+      "conversion": null,
+      "kind": "measured",
+      "evidence_source": "orange_county_ro.Rd",
+      "confidence": "documented",
+      "assumptions": ["duration_not_invented"]
+    },
+    {
+      "external_name": "dss",
+      "schemas": ["ae_128", "fg_117"],
+      "canonical_name": "days_since_cleaning_d",
+      "unit": "d",
+      "conversion": null,
+      "kind": "source_calculated",
+      "evidence_source": "orange_county_ro.Rd",
+      "confidence": "documented",
+      "assumptions": ["dss_zero_not_clean_reference_proof"]
+    }
+  ],
+  "diagrams": {
+    "files": [
+      "orange_county_ro_diagram1.png",
+      "orange_county_ro_diagram2.png"
+    ],
+    "role": "Support investigation of bank/stage layout; do not automatically establish CSV column units or semantics."
+  },
+  "afbc": {
+    "policy": "Do not reinterpret using an unsupported acronym expansion beyond Rd token list."
+  }
+}

@@ -1,0 +1,73 @@
+# Example external→canonical mapping (Phase 1 contract illustration).
+# Units are explicit; no conductivity→TDS coefficient is assumed.
+# Reference conditions are undeclared until provenance exists.
+
+name: orange_county_ro_phase1_example
+notes: >
+  Illustrative mapping only. Ambiguous or undocumented units must be resolved
+  before modelling. Do not use this file as a silent clean-reference assignment.
+
+mappings:
+  - external_name: date
+    canonical_name: observation_date_calendar
+    unit: { symbol: "calendar_date", description: "Calendar date of daily average" }
+    kind: measured
+
+  - external_name: temp_c
+    canonical_name: temperature_c
+    unit: { symbol: "deg_C", description: "Temperature in degrees Celsius" }
+    kind: measured
+
+  - external_name: feed_psi
+    canonical_name: feed_pressure_psi
+    unit: { symbol: "psi", description: "Feed pressure" }
+    kind: measured
+
+  - external_name: stage_3_flux
+    canonical_name: stage_3_flux_gfd
+    unit: { symbol: "gfd", description: "Assumed conventional flux unit; CONFIRM before modelling" }
+    kind: derived
+    notes: Unit not confirmed in Rd; placeholder symbol must be validated.
+
+  - external_name: tcf_water
+    canonical_name: temperature_correction_factor_water_1
+    unit: { symbol: "1", description: "Dimensionless TCF" }
+    kind: derived
+
+  - external_name: stage_3_net_driving_press
+    canonical_name: stage_3_net_driving_pressure_psi
+    unit: { symbol: "psi", description: "Net driving pressure; CONFIRM unit" }
+    kind: derived
+
+  - external_name: s3sf
+    canonical_name: stage_3_specific_flux_gfd_per_psi
+    unit: { symbol: "gfd_per_psi", description: "Observed specific flux; CONFIRM unit" }
+    kind: derived
+    notes: Empirically related to flux*tcf/ndp in source; not validated as ASTM normalisation.
+
+  - external_name: cip
+    canonical_name: cip_flag_1
+    unit: { symbol: "flag_0_1", description: "0 = no cleaning, 1 = cleaning (per Rd)" }
+    kind: measured
+
+  - external_name: dss
+    canonical_name: days_since_cleaning_d
+    unit: { symbol: "d", description: "Days since a cleaning (per Rd)" }
+    kind: derived
+    notes: dss=0 is NOT treated as a clean reference in Phase 1.
+
+  - external_name: days_since_replacement
+    canonical_name: days_since_replacement_d
+    unit: { symbol: "d" }
+    kind: derived
+
+  - external_name: rof_toc_avg
+    canonical_name: ro_feed_toc_avg_mg_per_L
+    unit: { symbol: "mg_per_L", description: "Per Rd: mg/L" }
+    kind: measured
+
+  - external_name: perm_ec
+    canonical_name: permeate_conductivity_uS_per_cm
+    unit: { symbol: "uS_per_cm", description: "Conductivity unit CONFIRM; not converted to TDS" }
+    kind: measured
+    notes: Do not guess conductivity-to-TDS coefficients.

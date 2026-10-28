@@ -1,0 +1,7 @@
+mode: documented
+provenance: "Hand-specified demo reference for non-OCWD integration test"
+available_from: "2020-01-01"
+temperature_c: 25.0
+ndp_psi: 150.0
+permeate_flow: 6500.0
+permeate_flow_unit: gpd

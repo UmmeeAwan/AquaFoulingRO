@@ -1,0 +1,20 @@
+# Compose file substitution (${VAR}) can read a host `.env` next to this file.
+# That does NOT inject those values into the container unless listed below or
+# via `env_file:`. Keys under `environment:` become process env inside the
+# container and override image ENV / serving YAML (see settings precedence).
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      AQUA_HOST: "0.0.0.0"
+      AQUA_PORT: "8000"
+      AQUA_LOG_LEVEL: "info"
+      AQUA_ARTIFACT_PATH: "/app/artifacts/models/llt_relative_health_v1.json"
+    # Raw dataset is intentionally not mounted or copied into the image.
+    read_only: true
+    tmpfs:
+      - /tmp
