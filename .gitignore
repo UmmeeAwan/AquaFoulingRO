@@ -39,7 +39,7 @@ data/raw/**
 !data/raw/.gitkeep
 data/processed/**
 !data/processed/.gitkeep
-data/extracted/
+data/extracted/**
 !data/extracted/.gitkeep
 # Bulky local dumps / mirrors (not part of the delivery tree)
 data/gptoutput/
@@ -67,6 +67,8 @@ reports/**
 !reports/phase3/**
 !reports/phase4/
 !reports/phase4/**
+!reports/technical_report.md
+!reports/technical_report.pdf
 
 # IDE / OS
 .idea/
